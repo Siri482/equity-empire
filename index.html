@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080810;--surface:#0d0d1a;--card:#111120;--border:#ffffff1a;--purple:#a855f7;--blue:#38bdf8;--green:#34d399;--red:#f87171;--amber:#fbbf24;--font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace}
+body{background:var(--bg);color:#fff;font-family:var(--font);min-height:600px;overflow-x:hidden}
+.screen{min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes popIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countPop{0%{transform:scale(0.2);opacity:0}40%{transform:scale(1.3);opacity:1}70%{transform:scale(.95)}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.max500{max-width:500px;width:100%}
+.max580{max-width:580px;width:100%}
+h1.logo{font-size:clamp(42px,9vw,72px);font-weight:800;line-height:.95;letter-spacing:-2px}
+h1.logo .eq{color:#38bdf8;text-shadow:0 0 28px #38bdf870}
+h1.logo .em{color:#a855f7;text-shadow:0 0 28px #a855f770}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:#ffffff60;text-transform:uppercase;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.btn{font-family:var(--font);font-weight:700;border:none;border-radius:12px;padding:13px 24px;cursor:pointer;transition:all .18s;display:block;width:100%;font-size:15px;text-align:center}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 0 20px #a855f730}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 28px #a855f750}
+.btn-primary:disabled{opacity:.45;transform:none;cursor:not-allowed}
+.btn-ghost{background:#ffffff08;border:1px solid var(--border);color:#ffffffcc}
+.btn-ghost:hover{border-color:#ffffff40;background:#ffffff12}
+.btn-big{font-size:17px;padding:16px 28px;border-radius:14px}
+.btn-paypal{background:linear-gradient(135deg,#003087,#009cde);color:#fff;text-decoration:none;display:block;text-align:center;padding:15px;border-radius:12px;font-family:var(--font);font-weight:700;font-size:15px;transition:all .18s}
+.btn-paypal:hover{transform:translateY(-2px)}
+.btn-decision{background:var(--surface);border:1px solid var(--border);color:#fff;width:100%;text-align:left;border-radius:12px;padding:13px 16px;font-size:14px;line-height:1.5;cursor:pointer;font-family:var(--font);transition:all .18s;display:block;margin-bottom:8px}
+.btn-decision:hover:not(:disabled){border-color:var(--purple);background:#1a0d2e;transform:translateX(3px)}
+.btn-decision:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.opt-lbl{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--purple);letter-spacing:2px;margin-bottom:4px;display:block}
+.metric-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.m-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
+.m-lbl{font-family:var(--mono);font-size:10px;color:#ffffff60;width:50px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.m-bar{flex:1;height:7px;background:#ffffff0a;border-radius:4px;overflow:hidden}
+.m-fill{height:100%;border-radius:4px;transition:width .55s cubic-bezier(.4,0,.2,1)}
+.m-val{font-family:var(--mono);font-size:13px;font-weight:700;width:28px;text-align:right;flex-shrink:0}
+.m-delta{font-family:var(--mono);font-size:11px;width:34px;text-align:right;flex-shrink:0}
+.d-pos{color:var(--green)}.d-neg{color:var(--red)}
+.urgent-pill{display:inline-flex;align-items:center;gap:6px;background:#fbbf2418;border:1px solid #fbbf2440;border-radius:8px;padding:4px 12px;font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:2px;animation:pulse 1.2s infinite;margin-bottom:12px}
+.timer-wrap{display:flex;align-items:center;justify-content:center;position:relative;width:52px;height:52px;flex-shrink:0}
+.timer-wrap svg{transform:rotate(-90deg)}
+.timer-num{position:absolute;font-family:var(--mono);font-weight:700;font-size:18px;color:var(--amber);line-height:1}
+.feedback-box{background:#ffffff08;border:1px solid var(--border);border-radius:12px;padding:18px;animation:fadeIn .3s ease;margin-top:4px}
+.score-huge{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1}
+.cap-btn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all .18s;color:#fff;font-family:var(--font);width:100%;margin-bottom:10px;display:block}
+.cap-btn:hover{border-color:#38bdf860;transform:translateY(-1px)}
+.cap-btn.sel{border-color:var(--purple);background:#1a0a2e}
+.cap-btn h3{font-size:16px;font-weight:700;margin-bottom:3px;color:#fff}
+.cap-btn p{font-size:13px;color:#ffffff70}
+.ind-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.ind-btn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 10px;cursor:pointer;text-align:center;transition:all .18s;color:#fff;font-family:var(--font)}
+.ind-btn:hover:not(.locked){transform:translateY(-2px);border-color:#ffffff30}
+.ind-btn.sel{border-color:var(--purple);background:#1a0a2e}
+.ind-btn.locked{opacity:.45;cursor:not-allowed}
+.ind-btn .ind-emoji{font-size:28px;margin-bottom:6px}
+.ind-btn .ind-name{font-size:13px;font-weight:700}
+.ind-btn .ind-tag{font-family:var(--mono);font-size:9px;color:#ffffff50;margin-top:3px;letter-spacing:1px}
+.ind-btn .pro-lock{font-family:var(--mono);font-size:9px;color:var(--amber);margin-top:3px;letter-spacing:1px}
+.inp{width:100%;background:#ffffff0a;border:1px solid var(--border);border-radius:10px;padding:13px 16px;font-size:15px;font-family:var(--font);color:#fff;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--purple)}
+.inp.error{border-color:var(--red);animation:shake .3s ease}
+.inp::placeholder{color:#ffffff40}
+.lb-row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);font-size:14px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:var(--mono);font-size:11px;color:#ffffff50;text-align:center}
+.lb-name{color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-score{font-family:var(--mono);font-weight:700;color:var(--purple);text-align:right;white-space:nowrap}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,#00000009 2px,#00000009 4px);z-index:999}
+.badge-pill{display:inline-flex;align-items:center;gap:5px;background:#ffffff10;border:1px solid #ffffff20;border-radius:20px;padding:4px 10px;font-size:12px;font-family:var(--mono);color:#fff;margin:3px;animation:popIn .4s ease}
+.badge-pill.new{border-color:var(--amber);background:#fbbf2418;color:var(--amber)}
+.micro-event{background:#ffffff0a;border:1px solid #fbbf2430;border-radius:10px;padding:12px 14px;margin-bottom:12px;animation:slideDown .35s ease;font-size:14px;color:var(--amber);line-height:1.5}
+.history-row{padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.history-row:last-child{border-bottom:none}
+.countdown-overlay{position:fixed;inset:0;background:#080810f5;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;animation:fadeIn .2s ease}
+.countdown-num{font-family:var(--mono);font-weight:700;font-size:120px;color:var(--purple);text-shadow:0 0 60px #a855f780;animation:countPop .6s ease forwards}
+.countdown-label{font-family:var(--mono);font-size:13px;letter-spacing:4px;color:#ffffff60;margin-top:16px;text-transform:uppercase}
+.popup-overlay{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:9997;animation:fadeIn .2s ease}
+.popup-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;max-width:340px;width:90%;text-align:center;animation:popIn .3s ease}
+.popup-box h3{font-size:20px;font-weight:800;margin-bottom:10px;color:#fff}
+.popup-box p{font-size:14px;color:#ffffffaa;line-height:1.6;margin-bottom:20px}
+.logo-corner{position:absolute;top:18px;left:18px;width:64px;height:64px;animation:logoFloat 3s ease-in-out infinite}
+.home-wrapper{position:relative;min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;animation:fadeIn .4s ease}
+
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CDWYM2WSEG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CDWYM2WSEG');
+</script>
+</head>
+<body>
+<div class="scanlines"></div>
+<canvas id="shareCanvas" style="display:none"></canvas>
+<div id="root"></div>
+
+<script>
+const ALL_EVENTS={
+  tech:[
+    {id:'t1',title:'Sales Cliff',text:'Your B2B pipeline dried up. Three enterprise deals collapsed overnight.',urgent:false,options:[
+      {label:'Slash prices 30% to win deals back fast',fx:{cash:10,growth:5,trust:-5,risk:5}},
+      {label:'Launch guerrilla PR targeting competitors\' customers',fx:{cash:-10,growth:15,trust:5,risk:10}},
+      {label:'Cut costs internally and extend runway',fx:{cash:20,growth:-15,trust:0,risk:-10}},
+      {label:'Hire a sales consultant to rebuild the pipeline',fx:{cash:-12,growth:8,trust:3,risk:-5}},
+    ]},
+    {id:'t2',title:'Data Breach',text:'A hacker exposed 50,000 user emails. TechCrunch is drafting the headline.',urgent:true,options:[
+      {label:'Full disclosure — notify all users within 24h',fx:{cash:-15,growth:-5,trust:20,risk:-15}},
+      {label:'Patch quietly and say nothing unless forced',fx:{cash:0,growth:0,trust:-20,risk:15}},
+      {label:'Hire a top cybersecurity firm and go public',fx:{cash:-20,growth:5,trust:15,risk:-10}},
+      {label:'Offer all users free credit monitoring',fx:{cash:-18,growth:0,trust:12,risk:-8}},
+    ]},
+    {id:'t3',title:'AI Competitor',text:'A well-funded AI startup just automated half of what your product does — for free.',urgent:false,options:[
+      {label:'Pivot to enterprise — add features they can\'t match',fx:{cash:-15,growth:15,trust:5,risk:10}},
+      {label:'Partner with them instead of competing',fx:{cash:5,growth:10,trust:8,risk:-5}},
+      {label:'Race to release your own AI layer first',fx:{cash:-20,growth:20,trust:0,risk:20}},
+      {label:'Double down on customer service as your moat',fx:{cash:-8,growth:5,trust:15,risk:-5}},
+    ]},
+    {id:'t4',title:'Runway Crunch',text:'Your CFO is pale. 45 days of cash left. No investor has replied.',urgent:true,options:[
+      {label:'Emergency bridge loan at brutal rates',fx:{cash:25,growth:-5,trust:0,risk:20}},
+      {label:'Emergency layoffs — cut 20% immediately',fx:{cash:20,growth:-10,trust:-15,risk:5}},
+      {label:'Cold-pitch 10 angels in 48 hours',fx:{cash:10,growth:5,trust:5,risk:-5}},
+      {label:'Offer revenue-share to a strategic partner',fx:{cash:15,growth:8,trust:0,risk:10}},
+    ]},
+    {id:'t5',title:'Team Revolt',text:'Your CTO and two senior engineers resigned on the same day.',urgent:false,options:[
+      {label:'Grant equity + full remote — retain at all costs',fx:{cash:-10,growth:5,trust:10,risk:-10}},
+      {label:'Counter with a salary raise, no equity',fx:{cash:-15,growth:0,trust:5,risk:0}},
+      {label:'Accept resignations, hire offshore team',fx:{cash:10,growth:-10,trust:-10,risk:15}},
+      {label:'Schedule a team retreat and address concerns',fx:{cash:-8,growth:0,trust:15,risk:-8}},
+    ]},
+    {id:'t6',title:'Viral Moment',text:'2M-follower influencer posted about you organically. 48 hours of attention.',urgent:false,options:[
+      {label:'Spend $50K on ads to ride the wave',fx:{cash:-20,growth:25,trust:10,risk:10}},
+      {label:'Engage directly, give free premium to top fans',fx:{cash:-10,growth:15,trust:20,risk:0}},
+      {label:'Do nothing — let it convert organically',fx:{cash:0,growth:10,trust:5,risk:-5}},
+      {label:'Partner with the influencer for a paid follow-up',fx:{cash:-15,growth:20,trust:12,risk:5}},
+    ]},
+    {id:'t7',title:'Acquisition Offer',text:'A big player offered $8M. Your product is 60% done.',urgent:false,options:[
+      {label:'Accept — cash out while the offer is real',fx:{cash:40,growth:0,trust:10,risk:-30}},
+      {label:'Counter at $15M and see what happens',fx:{cash:0,growth:5,trust:0,risk:15}},
+      {label:'Decline — commit to the full vision',fx:{cash:-5,growth:10,trust:15,risk:5}},
+      {label:'Ask for a 30-day window to decide',fx:{cash:0,growth:3,trust:5,risk:5}},
+    ]},
+    {id:'t8',title:'Server Meltdown',text:'Black Friday hit. Infrastructure collapsed for 4 hours. $120K in lost transactions.',urgent:true,options:[
+      {label:'Migrate to enterprise cloud — fix it right',fx:{cash:-25,growth:5,trust:15,risk:-20}},
+      {label:'Issue credits and patch the current system',fx:{cash:-10,growth:0,trust:5,risk:5}},
+      {label:'Blame the CDN publicly and pivot messaging',fx:{cash:-5,growth:-5,trust:-15,risk:10}},
+      {label:'Bring in a DevOps contractor for emergency triage',fx:{cash:-15,growth:0,trust:8,risk:-10}},
+    ]},
+  ],
+  restaurant:[
+    {id:'r1',title:'Health Inspection',text:'The inspector arrives unannounced. Two minor kitchen violations found.',urgent:true,options:[
+      {label:'Close 2 days, fix everything properly',fx:{cash:-20,growth:-5,trust:15,risk:-20}},
+      {label:'Fix the obvious issues and hope for the best',fx:{cash:-5,growth:0,trust:-5,risk:10}},
+      {label:'Argue violations are minor and stay open',fx:{cash:0,growth:0,trust:-15,risk:20}},
+      {label:'Hire a consultant to overhaul kitchen compliance',fx:{cash:-15,growth:0,trust:10,risk:-15}},
+    ]},
+    {id:'r2',title:'Food Influencer',text:'800K-follower blogger wants a free tasting for a post.',urgent:false,options:[
+      {label:'Host a full tasting event, comp everything',fx:{cash:-15,growth:20,trust:15,risk:5}},
+      {label:'Offer 50% discount, not fully free',fx:{cash:-8,growth:12,trust:8,risk:0}},
+      {label:'Decline — don\'t rely on influencer hype',fx:{cash:0,growth:-5,trust:5,risk:-5}},
+      {label:'Invite them plus 3 food journalist friends',fx:{cash:-20,growth:25,trust:12,risk:8}},
+    ]},
+    {id:'r3',title:'Supply Crisis',text:'Main food supplier went bankrupt. 3 days of stock left.',urgent:true,options:[
+      {label:'Emergency local sourcing at premium cost',fx:{cash:-25,growth:0,trust:10,risk:-10}},
+      {label:'Reduce the menu to what you have',fx:{cash:-5,growth:-10,trust:-5,risk:5}},
+      {label:'Close temporarily and find a new supplier',fx:{cash:-20,growth:-15,trust:5,risk:-15}},
+      {label:'Partner with two smaller local suppliers',fx:{cash:-15,growth:5,trust:8,risk:-5}},
+    ]},
+    {id:'r4',title:'Yelp Crisis',text:'One-star review went viral. Rating dropped from 4.7 to 3.9 overnight.',urgent:false,options:[
+      {label:'Reply publicly, invite reviewer back for free',fx:{cash:-10,growth:5,trust:20,risk:-10}},
+      {label:'Ignore it — let loyal customers drown it out',fx:{cash:0,growth:-5,trust:-10,risk:5}},
+      {label:'Offer all recent diners a discount voucher',fx:{cash:-18,growth:5,trust:15,risk:-5}},
+      {label:'Hire a reputation management firm',fx:{cash:-12,growth:0,trust:10,risk:-8}},
+    ]},
+    {id:'r5',title:'Chef Quits',text:'Head chef quit mid-service, taking two cooks with them.',urgent:true,options:[
+      {label:'Promote sous chef and raise their pay',fx:{cash:-10,growth:0,trust:5,risk:-5}},
+      {label:'Close for a week and recruit properly',fx:{cash:-25,growth:-10,trust:5,risk:-15}},
+      {label:'Run a simplified emergency menu tonight',fx:{cash:-5,growth:-5,trust:-8,risk:10}},
+      {label:'Call a recruitment agency for emergency hire',fx:{cash:-18,growth:0,trust:3,risk:-3}},
+    ]},
+    {id:'r6',title:'Expansion Offer',text:'A mall wants your second location with subsidised rent for year one.',urgent:false,options:[
+      {label:'Sign immediately — take the growth',fx:{cash:-20,growth:25,trust:0,risk:20}},
+      {label:'Negotiate better terms before signing',fx:{cash:-5,growth:12,trust:5,risk:8}},
+      {label:'Decline — perfect this location first',fx:{cash:5,growth:-5,trust:8,risk:-10}},
+      {label:'Do a 3-month pop-up trial before committing',fx:{cash:-10,growth:15,trust:5,risk:5}},
+    ]},
+    {id:'r7',title:'Food Trend',text:'Plant-based is taking over. Your menu is 90% meat.',urgent:false,options:[
+      {label:'Launch a full plant-based menu section',fx:{cash:-20,growth:15,trust:10,risk:5}},
+      {label:'Add two plant-based specials and test demand',fx:{cash:-8,growth:8,trust:8,risk:-5}},
+      {label:'Stay true to your brand — ignore the trend',fx:{cash:0,growth:-8,trust:3,risk:5}},
+      {label:'Partner with a plant-based supplier for a collab',fx:{cash:-12,growth:12,trust:10,risk:0}},
+    ]},
+    {id:'r8',title:'Summer Rush',text:'Bookings tripled. You\'re turning away 40 tables a night.',urgent:false,options:[
+      {label:'Add outdoor seating and hire seasonal staff',fx:{cash:-20,growth:20,trust:10,risk:10}},
+      {label:'Raise prices to manage demand naturally',fx:{cash:15,growth:5,trust:-8,risk:5}},
+      {label:'Implement a waitlist app to manage flow',fx:{cash:-8,growth:10,trust:12,risk:-5}},
+      {label:'Extend hours and run double shifts',fx:{cash:10,growth:15,trust:5,risk:10}},
+    ]},
+  ],
+  fashion:[
+    {id:'f1',title:'Collection Flop',text:'New season launched to silence. No press, no buzz, flat sales.',urgent:false,options:[
+      {label:'Discount 40% and push through influencers',fx:{cash:-15,growth:5,trust:-5,risk:5}},
+      {label:'Pull the collection and redesign key pieces',fx:{cash:-20,growth:-10,trust:8,risk:-10}},
+      {label:'Reframe as "minimalist" for a different audience',fx:{cash:-8,growth:8,trust:5,risk:5}},
+      {label:'Gift pieces to 20 micro-influencers for buzz',fx:{cash:-12,growth:15,trust:10,risk:5}},
+    ]},
+    {id:'f2',title:'Celebrity Moment',text:'A B-list celebrity wore your piece to a red carpet. It\'s everywhere.',urgent:false,options:[
+      {label:'Send them a full gifted wardrobe immediately',fx:{cash:-15,growth:25,trust:15,risk:5}},
+      {label:'Reach out for a paid partnership deal',fx:{cash:-20,growth:20,trust:10,risk:10}},
+      {label:'Let the organic buzz work — don\'t spend anything',fx:{cash:0,growth:12,trust:5,risk:0}},
+      {label:'Create a limited "as seen on" capsule collection',fx:{cash:-18,growth:22,trust:12,risk:8}},
+    ]},
+    {id:'f3',title:'Fast Fashion Copy',text:'Shein cloned your bestseller and sells it at $12. Yours is $180.',urgent:false,options:[
+      {label:'Call out the copy — authenticity campaign',fx:{cash:-5,growth:10,trust:20,risk:5}},
+      {label:'Accelerate production to widen the quality gap',fx:{cash:-20,growth:10,trust:10,risk:10}},
+      {label:'Ignore it — your customer knows the difference',fx:{cash:0,growth:-5,trust:5,risk:5}},
+      {label:'Pivot to limited drops — scarcity as differentiator',fx:{cash:5,growth:15,trust:12,risk:0}},
+    ]},
+    {id:'f4',title:'Supply Delay',text:'Manufacturer is 6 weeks behind. Fashion week is in 8 weeks.',urgent:true,options:[
+      {label:'Pay premium for air freight and rush production',fx:{cash:-25,growth:5,trust:8,risk:-10}},
+      {label:'Show only finished pieces, reduce the collection',fx:{cash:-10,growth:-10,trust:5,risk:-5}},
+      {label:'Skip fashion week this season',fx:{cash:0,growth:-20,trust:-5,risk:-15}},
+      {label:'Find an emergency local manufacturer',fx:{cash:-20,growth:8,trust:5,risk:-5}},
+    ]},
+    {id:'f5',title:'Ethics Scandal',text:'Journalist published a piece questioning your supply chain ethics.',urgent:false,options:[
+      {label:'Commission an independent audit, publish results',fx:{cash:-18,growth:0,trust:22,risk:-15}},
+      {label:'Release a sustainability pledge with 2-year roadmap',fx:{cash:-5,growth:5,trust:12,risk:-5}},
+      {label:'Ignore it — your audience doesn\'t care',fx:{cash:0,growth:-5,trust:-15,risk:10}},
+      {label:'Partner with a certified ethical supplier now',fx:{cash:-15,growth:8,trust:18,risk:-10}},
+    ]},
+    {id:'f6',title:'Collab Offer',text:'A cult streetwear brand wants a 50/50 collaboration drop.',urgent:false,options:[
+      {label:'Go all in — co-design a full capsule collection',fx:{cash:-20,growth:25,trust:15,risk:10}},
+      {label:'Do a limited 5-piece collab to test the water',fx:{cash:-8,growth:15,trust:10,risk:0}},
+      {label:'Decline — brand alignment isn\'t right',fx:{cash:0,growth:-5,trust:5,risk:-5}},
+      {label:'Negotiate a licensing deal instead',fx:{cash:10,growth:10,trust:5,risk:5}},
+    ]},
+    {id:'f7',title:'Pop-Up Offer',text:'Premium department store offers a 3-week flagship pop-up.',urgent:false,options:[
+      {label:'Take it — full investment, staff it properly',fx:{cash:-22,growth:20,trust:15,risk:8}},
+      {label:'Minimal setup to keep costs low',fx:{cash:-8,growth:10,trust:8,risk:3}},
+      {label:'Decline — online-first strategy stays',fx:{cash:5,growth:-5,trust:3,risk:-5}},
+      {label:'Partner with another indie brand to split costs',fx:{cash:-10,growth:14,trust:10,risk:0}},
+    ]},
+    {id:'f8',title:'Model Controversy',text:'Your campaign model made controversial comments. Press is calling.',urgent:true,options:[
+      {label:'Drop them and issue a clear statement immediately',fx:{cash:-8,growth:-5,trust:20,risk:-15}},
+      {label:'Stay quiet and wait for it to blow over',fx:{cash:0,growth:-5,trust:-15,risk:10}},
+      {label:'Defend them and double down on the campaign',fx:{cash:0,growth:5,trust:-20,risk:20}},
+      {label:'Pause campaign and consult your community first',fx:{cash:-5,growth:0,trust:10,risk:-5}},
+    ]},
+  ],
+};
+
+const MICRO_EVENTS=[
+  {text:'A key client just churned unexpectedly.',fx:{trust:-5}},
+  {text:'Unexpected press mention boosted brand awareness.',fx:{growth:5}},
+  {text:'An unexpected bill arrived 2× over budget.',fx:{cash:-8}},
+  {text:'A competitor just went under — opportunity!',fx:{growth:8,risk:-5}},
+  {text:'Your top performer landed a surprise deal.',fx:{cash:10}},
+  {text:'Online reviews went negative overnight.',fx:{trust:-8}},
+  {text:'A minor issue slipped to customers.',fx:{trust:-5,risk:5}},
+  {text:'Organic traffic spiked this week.',fx:{growth:7}},
+  {text:'An investor cold-emailed asking to chat.',fx:{growth:5,trust:3}},
+  {text:'An unexpected operational cost hit.',fx:{cash:-7}},
+];
+
+const BADGES=[
+  {id:'survivor',label:'Survivor',emoji:'🛡️',desc:'Finish any run',check:(g)=>true},
+  {id:'legendary',label:'Legend',emoji:'👑',desc:'Score over 175',check:(g)=>g.finalScore>=175},
+  {id:'no_crash',label:'Steady Hand',emoji:'🧘',desc:'No metric hit 0',check:(g)=>g.minMetric>0},
+  {id:'risk_king',label:'Risk King',emoji:'🎲',desc:'Risk hit 80+',check:(g)=>g.maxRisk>=80},
+  {id:'trust_builder',label:'Trust Builder',emoji:'🤝',desc:'Trust ended at 80+',check:(g)=>g.metrics.trust>=80},
+  {id:'bootstrapped_win',label:'Boot Hero',emoji:'👟',desc:'Score 120+ on Bootstrapped',check:(g)=>g.capital==='low'&&g.finalScore>=120},
+  {id:'crisis_pro',label:'Crisis Pro',emoji:'⚡',desc:'Survived 2 urgent events',check:(g)=>g.urgentSurvived>=2},
+  {id:'cash_rich',label:'Cash Hoarder',emoji:'💰',desc:'Cash ended at 70+',check:(g)=>g.metrics.cash>=70},
+  {id:'all_industries',label:'Empire Builder',emoji:'🏛️',desc:'Play all 3 industries',check:(g)=>g.industriesPlayed&&g.industriesPlayed.size>=3},
+  {id:'fashion_first',label:'Trendsetter',emoji:'👗',desc:'Complete a Fashion run',check:(g)=>g.industry==='fashion'},
+  {id:'restaurant_first',label:'Head Chef',emoji:'🍽️',desc:'Complete a Restaurant run',check:(g)=>g.industry==='restaurant'},
+];
+
+const CAPS=[
+  {id:'low',label:'Bootstrapped',desc:'No VC. Scrappy, lean, high pressure.',cash:30,growth:50,trust:50,risk:20},
+  {id:'medium',label:'Seed Funded',desc:'$2M raised. Balanced, standard risk.',cash:50,growth:50,trust:50,risk:30},
+  {id:'high',label:'Series A',desc:'$10M in bank. High expectations, amplified risk.',cash:70,growth:50,trust:50,risk:40},
+];
+
+const INDUSTRIES=[
+  {id:'tech',label:'Tech',emoji:'💻',desc:'SaaS startup',pro:false},
+  {id:'restaurant',label:'Restaurant',emoji:'🍽️',desc:'Food & hospitality',pro:true},
+  {id:'fashion',label:'Fashion',emoji:'👗',desc:'Design & lifestyle',pro:true},
+];
+
+const PRO_CODE='THECEO202';
+const TOTAL=6;const TIMER_SECS=10;
+const TIMEOUT_FX={cash:-15,growth:-10,trust:-10,risk:20};
+const JSONBIN_BIN_ID='69f7b276aaba8821976913c0';
+const JSONBIN_API_KEY='$2a$10$tw7nxYlPegTc0btPFPg1LubK06Iz6BL.XHbxcqyYivjuE28sT6ydC';
+const USE_GLOBAL_LB=JSONBIN_BIN_ID!=='YOUR_BIN_ID_HERE';
+
+let lb=[];
+let earnedBadges=new Set();try{earnedBadges=new Set(JSON.parse(localStorage.getItem('ee_badges8')||'[]'))}catch(e){}
+let industriesPlayed=new Set();try{industriesPlayed=new Set(JSON.parse(localStorage.getItem('ee_ind8')||'[]'))}catch(e){}
+let isPro=false;try{isPro=localStorage.getItem('ee_pro')==='1'}catch(e){}
+
+let G={
+  screen:'home',name:'',capital:null,industry:'tech',metrics:{},events:[],round:0,
+  feedback:null,deltas:{},timerVal:TIMER_SECS,timerActive:false,_timer:null,
+  history:[],microEvent:null,newBadges:[],urgentSurvived:0,minMetric:100,maxRisk:0,finalScore:0
+};
+
+async function loadGlobalLb(){
+  if(!USE_GLOBAL_LB){try{lb=JSON.parse(localStorage.getItem('ee_lb8')||'[]')}catch(e){}return;}
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`,{headers:{'X-Access-Key':JSONBIN_API_KEY}});
+    const d=await r.json();
+    lb=(d.record&&d.record.scores)||[];
+  }catch(e){try{lb=JSON.parse(localStorage.getItem('ee_lb8')||'[]')}catch(e2){}}
+}
+async function saveGlobalLb(entry){
+  lb.push(entry);lb.sort((a,b)=>b.score-a.score);lb=lb.slice(0,50);
+  if(!USE_GLOBAL_LB){try{localStorage.setItem('ee_lb8',JSON.stringify(lb))}catch(e){}return;}
+  try{
+    const rc=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`,{headers:{'X-Access-Key':JSONBIN_API_KEY}});
+    const dc=await rc.json();
+    const keepCount=(dc.record&&dc.record.playerCount)||0;
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Access-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:lb,playerCount:keepCount})});
+  }catch(e){try{localStorage.setItem('ee_lb8',JSON.stringify(lb))}catch(e2){}}
+}
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function clamp(v){return Math.max(0,Math.min(100,Math.round(v)))}
+function pickEvents(industry){const pool=ALL_EVENTS[industry]||ALL_EVENTS.tech;const urg=shuffle(pool.filter(e=>e.urgent)).slice(0,2);const norm=shuffle(pool.filter(e=>!e.urgent)).slice(0,4);return shuffle([...norm,...urg]).slice(0,TOTAL)}
+function applyFx(m,fx,capId){const rm=capId==='high'?1.3:1;return{cash:clamp(m.cash+(fx.cash||0)),growth:clamp(m.growth+(fx.growth||0)),trust:clamp(m.trust+(fx.trust||0)),risk:clamp(m.risk+Math.round((fx.risk||0)*rm))}}
+function score(m){return m.cash+m.growth+m.trust-m.risk}
+function titleInfo(s){
+  if(s<60)return{emoji:'💀',title:'Failed Founder',color:'#f87171',blurb:'The market chewed you up. Startup lessons are the most expensive kind.'};
+  if(s<120)return{emoji:'🐢',title:'Survivor',color:'#fbbf24',blurb:'You kept the lights on. That\'s more than most founders manage.'};
+  if(s<175)return{emoji:'🚀',title:'Scaler',color:'#38bdf8',blurb:'Real momentum built. Investors are taking your calls now.'};
+  return{emoji:'👑',title:'Legendary CEO',color:'#a855f7',blurb:'You didn\'t just win — you defined the category.'};
+}
+function insight(d){
+  const icons={cash:{up:'💰',dn:'💸'},growth:{up:'📈',dn:'📉'},trust:{up:'🤝',dn:'💔'},risk:{up:'⚠️',dn:'🛡️'}};
+  const lbl={cash:'Cash',growth:'Growth',trust:'Trust',risk:'Risk'};
+  const entries=Object.entries(d).filter(([,v])=>v!==0).map(([k,v])=>{const good=k==='risk'?v<0:v>0;return{k,v,good,icon:v>0?icons[k].up:icons[k].dn,label:lbl[k]}});
+  if(!entries.length)return'No real movement this round.';
+  const pos=entries.filter(e=>e.good),neg=entries.filter(e=>!e.good);
+  const fmt=arr=>arr.map(e=>`${e.label} ${e.icon}`).join(', ');
+  if(pos.length&&neg.length)return fmt(pos)+' improved — but '+fmt(neg).toLowerCase()+' took a hit';
+  if(pos.length)return fmt(pos)+' improved. Clean win.';
+  return fmt(neg)+' took a hit. Rough round.';
+}
+function metricColor(k){return{cash:'#38bdf8',growth:'#a855f7',trust:'#34d399',risk:'#f87171'}[k]}
+function renderMetrics(m,d){
+  const keys=['cash','growth','trust','risk'];const icons={cash:'💵',growth:'📊',trust:'🤝',risk:'⚡'};
+  return keys.map(k=>{const v=m[k],dv=(d&&d[k])||0,col=metricColor(k);
+    return`<div class="metric-row"><span class="m-icon">${icons[k]}</span><span class="m-lbl">${k}</span><div class="m-bar"><div class="m-fill" style="width:${v}%;background:${col}"></div></div><span class="m-val" style="color:${col}">${v}</span><span class="m-delta ${dv>0?'d-pos':dv<0?'d-neg':''}">${dv===0?'':(dv>0?'+':'')+dv}</span></div>`;
+  }).join('');
+}
+function checkBadges(){
+  industriesPlayed.add(G.industry);try{localStorage.setItem('ee_ind8',JSON.stringify([...industriesPlayed]))}catch(e){}
+  const data={finalScore:G.finalScore,metrics:G.metrics,capital:G.capital?G.capital.id:'',minMetric:G.minMetric,maxRisk:G.maxRisk,urgentSurvived:G.urgentSurvived,industry:G.industry,industriesPlayed};
+  const newOnes=[];
+  BADGES.forEach(b=>{if(!earnedBadges.has(b.id)&&b.check(data)){earnedBadges.add(b.id);newOnes.push(b)}});
+  try{localStorage.setItem('ee_badges8',JSON.stringify([...earnedBadges]))}catch(e){}
+  return newOnes;
+}
+function clearTimer(){clearInterval(G._timer);G._timer=null}
+function startTimer(){
+  clearTimer();G.timerVal=TIMER_SECS;G.timerActive=true;
+  G._timer=setInterval(()=>{G.timerVal--;if(G.timerVal<=0){clearTimer();timeoutDecision();return}updateTimerDOM();if(G.timerVal<=3)playSound('tick')},1000);
+}
+function timeoutDecision(){
+  const m=applyFx(G.metrics,TIMEOUT_FX,G.capital.id);
+  const dv={cash:m.cash-G.metrics.cash,growth:m.growth-G.metrics.growth,trust:m.trust-G.metrics.trust,risk:m.risk-G.metrics.risk};
+  G.metrics=m;G.deltas=dv;G.history.push({round:G.round+1,event:G.events[G.round].title,choice:'⏱ Time ran out!',deltas:dv});
+  G.feedback={text:'Time ran out! The crisis escalated unchecked.',insight:'Cash 💸, Growth 📉, Trust 💔 all dropped — Risk ⚠️ spiked.'};
+  G.timerActive=false;playSound('bad');render();
+}
+function updateTimerDOM(){
+  const n=document.getElementById('tn'),c=document.getElementById('tc');
+  if(n)n.textContent=G.timerVal;if(c){const r=20,ci=2*Math.PI*r;c.style.strokeDashoffset=ci*(1-G.timerVal/TIMER_SECS)}
+}
+let audioCtx=null;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function playSound(type){
+  try{
+    const ctx=getAudio(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+    if(type==='tick'){o.frequency.value=880;g.gain.setValueAtTime(.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.08);o.start();o.stop(ctx.currentTime+.08)}
+    else if(type==='good'){o.type='sine';o.frequency.setValueAtTime(523,ctx.currentTime);o.frequency.setValueAtTime(659,ctx.currentTime+.1);o.frequency.setValueAtTime(784,ctx.currentTime+.2);g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);o.start();o.stop(ctx.currentTime+.4)}
+    else if(type==='bad'){o.type='sawtooth';o.frequency.setValueAtTime(200,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+.3);g.gain.setValueAtTime(.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);o.start();o.stop(ctx.currentTime+.3)}
+    else if(type==='click'){o.frequency.value=440;g.gain.setValueAtTime(.1,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.05);o.start();o.stop(ctx.currentTime+.05)}
+    else if(type==='badge'){[523,659,784,1047].forEach((f,i)=>{const oo=ctx.createOscillator(),gg=ctx.createGain();oo.connect(gg);gg.connect(ctx.destination);oo.frequency.value=f;gg.gain.setValueAtTime(.15,ctx.currentTime+i*.1);gg.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.15);oo.start(ctx.currentTime+i*.1);oo.stop(ctx.currentTime+i*.1+.15)})}
+    else if(type==='start'){o.type='sine';o.frequency.setValueAtTime(300,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(900,ctx.currentTime+.4);g.gain.setValueAtTime(.25,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.5);o.start();o.stop(ctx.currentTime+.5)}
+  }catch(e){}
+}
+function showCountdown(cb){
+  const overlay=document.createElement('div');overlay.className='countdown-overlay';document.body.appendChild(overlay);
+  let n=3;
+  function tick(){
+    overlay.innerHTML=`<div class="countdown-num">${n}</div><div class="countdown-label">Get ready</div>`;
+    playSound('tick');if(n===0){setTimeout(()=>{overlay.remove();cb()},700);return}
+    n--;setTimeout(tick,900);
+  }
+  tick();
+}
+function showPopup(title,msg,onClose){
+  const ov=document.createElement('div');ov.className='popup-overlay';ov.id='popup-overlay';
+  ov.innerHTML=`<div class="popup-box"><div style="font-size:36px;margin-bottom:10px">⚠️</div><h3>${title}</h3><p>${msg}</p><button class="btn btn-primary" onclick="document.getElementById('popup-overlay').remove();${onClose||''}" style="margin-top:4px">Got it</button></div>`;
+  document.body.appendChild(ov);playSound('bad');
+}
+function tryBeginRun(){
+  playSound('click');
+  const missing=[];
+  if(!G.name.trim())missing.push('your name');
+  if(!G.capital)missing.push('a starting capital');
+  if(missing.length){
+    showPopup('One moment! 👋','Please fill in '+missing.join(' and ')+' before starting your run.');
+    if(!G.name.trim()){const i=document.getElementById('name-inp');if(i){i.classList.add('error');setTimeout(()=>i.classList.remove('error'),600)}}
+    if(!G.capital){document.querySelectorAll('.cap-btn').forEach(b=>{b.style.animation='shake .3s ease';setTimeout(()=>b.style.animation='',600)})}
+    return;
+  }
+  const ind=INDUSTRIES.find(i=>i.id===G.industry);
+  if(ind&&ind.pro&&!isPro){showPopup('Pro Feature 🔒','Restaurant and Fashion industries require Equity Empire Pro. Upgrade for $2.99.','G.screen=\'home\';render();setTimeout(()=>openHomeTab(\'pro\'),100)');return;}
+  showCountdown(()=>{
+    G.metrics={cash:G.capital.cash,growth:G.capital.growth,trust:G.capital.trust,risk:G.capital.risk};
+    G.events=pickEvents(G.industry);G.round=0;G.feedback=null;G.deltas={};G.history=[];
+    G.microEvent=null;G.newBadges=[];G.urgentSurvived=0;G.minMetric=100;G.maxRisk=0;G.finalScore=0;
+    G.screen='game';render();playSound('start');
+    if(G.events[0].urgent)startTimer();
+  });
+}
+
+function getLogoHTML(size=64){
+  return`<svg width="${size}" height="${size}" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 14px #fbbf2470)">
+    <defs>
+      <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f7c048"/><stop offset="40%" style="stop-color:#ffd97a"/><stop offset="100%" style="stop-color:#c87f0a"/></linearGradient>
+      <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8fb4d8"/><stop offset="100%" style="stop-color:#b8d4f0"/></linearGradient>
+    </defs>
+    <path d="M22 155 L22 105 L55 60 L100 115 L145 60 L178 105 L178 155 Z" fill="url(#gold)" stroke="#c87f0a" stroke-width="2"/>
+    <path d="M22 105 L55 60 L100 20 L145 60 L178 105" fill="none" stroke="url(#gold)" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="22" cy="105" r="12" fill="url(#gold)" stroke="#c87f0a" stroke-width="1.5"/>
+    <circle cx="178" cy="105" r="12" fill="url(#gold)" stroke="#c87f0a" stroke-width="1.5"/>
+    <rect x="18" y="155" width="164" height="14" rx="7" fill="url(#silver)"/>
+    <polyline points="35,145 70,118 100,132 130,108 165,85" fill="none" stroke="url(#silver)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon points="165,85 148,80 155,97" fill="url(#silver)"/>
+  </svg>`;
+}
+
+function render(){
+  const el=document.getElementById('root');
+  if(G.screen==='home') renderHome(el);
+  else if(G.screen==='setup') renderSetupScreen(el);
+  else if(G.screen==='game') renderGame(el);
+  else if(G.screen==='results') renderResults(el);
+}
+
+function renderHome(el){
+    el.innerHTML=`
+  <div class="home-wrapper">
+    <div class="logo-corner" title="Equity Empire">${getLogoHTML(64)}</div>
+    <div class="max500" style="text-align:center">
+      <div class="tag">Business Simulation · Season 1</div>
+      <h1 class="logo" style="margin-bottom:14px"><span class="eq">Equity</span><br><span class="em">Empire</span></h1>
+      <p style="font-size:19px;font-weight:700;color:#fff;margin-bottom:8px">Can you run a business?</p>
+      <p style="color:#ffffffaa;font-size:14px;line-height:1.8;margin-bottom:20px">6 rounds. 4 metrics. One chance to build<br>something legendary — or crash and burn.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <button class="btn btn-primary btn-big" onclick="G.screen='setup';render();playSound('click')">▶ &nbsp;Play</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" onclick="openHomeTab('badges')" style="flex:1">🎖 Badges</button>
+          <button class="btn btn-ghost" onclick="openHomeTab('pro')" style="flex:1">${isPro?'✦ Pro':'Pro'}</button>
+        </div>
+      </div>
+      <div id="home-tab-content"></div>
+    </div>
+  </div>`;
+}
+
+function openHomeTab(tab){
+  playSound('click');
+  const el=document.getElementById('home-tab-content');if(!el)return;
+  if(tab==='badges'){el.innerHTML=renderBadges()}
+  else if(tab==='pro'){el.innerHTML=renderPro()}
+}
+
+function renderSetupScreen(el){
+  el.innerHTML=`<div class="screen"><div class="max500">
+    <button onclick="G.screen='home';render();playSound('click')" style="background:none;border:none;cursor:pointer;color:#ffffff60;font-family:var(--mono);font-size:11px;letter-spacing:2px;margin-bottom:20px;display:block">← BACK</button>
+    <div class="tag" style="margin-bottom:4px">Set Up Your Run</div>
+    <h2 style="font-size:26px;font-weight:800;margin-bottom:24px;color:#fff">Who are you,<br>and how do you start?</h2>
+    <div style="margin-bottom:22px">
+      <div class="tag" style="margin-bottom:8px">01 · Your Name</div>
+      <input class="inp" id="name-inp" placeholder="Enter your name to save your score..." value="${G.name}" oninput="G.name=this.value" maxlength="30" autocomplete="off">
+    </div>
+    <div style="margin-bottom:22px">
+      <div class="tag" style="margin-bottom:8px">02 · Industry</div>
+      <div class="ind-grid">
+        ${INDUSTRIES.map(ind=>{const locked=ind.pro&&!isPro;const sel=G.industry===ind.id;
+          return`<button class="ind-btn ${sel?'sel':''} ${locked?'locked':''}"
+            onclick="${locked?`showPopup('Pro Feature 🔒','Restaurant and Fashion require Equity Empire Pro. Upgrade for $2.99.')`:
+            `G.industry='${ind.id}';document.querySelectorAll('.ind-btn').forEach(b=>b.classList.remove('sel'));this.classList.add('sel')`}">
+            <div class="ind-emoji">${ind.emoji}</div>
+            <div class="ind-name">${ind.label}</div>
+            <div class="${locked?'pro-lock':'ind-tag'}">${locked?'🔒 PRO':ind.desc}</div>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>
+    <div style="margin-bottom:28px">
+      <div class="tag" style="margin-bottom:8px">03 · Starting Capital</div>
+      ${CAPS.map(c=>`<button class="cap-btn ${G.capital&&G.capital.id===c.id?'sel':''}"
+        onclick="G.capital=CAPS.find(x=>x.id==='${c.id}');document.querySelectorAll('.cap-btn').forEach(b=>b.classList.remove('sel'));this.classList.add('sel')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <h3>${c.label}</h3>
+          <span style="font-family:var(--mono);font-size:10px;color:#ffffff60">Cash ${c.cash} · Risk ${c.risk}</span>
+        </div>
+        <p>${c.desc}</p>
+      </button>`).join('')}
+    </div>
+    <button class="btn btn-primary btn-big" onclick="tryBeginRun()">Begin Run →</button>
+  </div></div>`;
+}
+
+function renderGame(el){
+  const ev=G.events[G.round];const showTimer=ev.urgent&&G.timerActive&&!G.feedback;
+  const r=20,ci=2*Math.PI*r;const ind=INDUSTRIES.find(i=>i.id===G.industry);
+  el.innerHTML=`<div class="screen"><div class="max580">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div class="tag" style="margin-bottom:3px">Round ${G.round+1} / ${TOTAL} · ${ind?ind.emoji+' '+ind.label:''}</div>
+        <div style="font-size:13px;color:#ffffff80;font-family:var(--mono)">${G.name} · ${G.capital.label}</div>
+      </div>
+      ${showTimer?`<div class="timer-wrap"><svg width="50" height="50" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="${r}" fill="none" stroke="#ffffff12" stroke-width="3"/>
+        <circle id="tc" cx="25" cy="25" r="${r}" fill="none" stroke="${G.timerVal<=3?'#f87171':'#fbbf24'}" stroke-width="3"
+          stroke-dasharray="${ci}" stroke-dashoffset="${ci*(1-G.timerVal/TIMER_SECS)}" stroke-linecap="round"
+          style="transition:stroke-dashoffset .9s linear"/></svg>
+        <span class="timer-num" id="tn">${G.timerVal}</span></div>`:''}
+    </div>
+    <div class="card" style="margin-bottom:14px">${renderMetrics(G.metrics,G.feedback?G.deltas:null)}</div>
+    ${ev.urgent&&!G.feedback?'<div><span class="urgent-pill">⚡ URGENT — Decide fast</span></div>':''}
+    ${G.microEvent&&G.feedback?`<div class="micro-event">⚡ Mid-round event: ${G.microEvent.text}<br><span style="font-size:12px;font-family:var(--mono);opacity:.8">${Object.entries(G.microEvent.fx).map(([k,v])=>`${k} ${v>0?'+'+v:v}`).join(' · ')}</span></div>`:''}
+    <div class="card" style="margin-bottom:14px">
+      <div class="tag" style="margin-bottom:6px">${ev.title}</div>
+      <p style="font-size:15px;line-height:1.7;color:#ffffffcc">${ev.text}</p>
+    </div>
+    ${!G.feedback?`<div>${ev.options.map((o,i)=>`<button class="btn-decision" onclick="decide(${i})"><span class="opt-lbl">${['A','B','C','D'][i]}</span>${o.label}</button>`).join('')}</div>`:''}
+    ${G.feedback?`<div class="feedback-box">
+      <div class="tag" style="margin-bottom:6px">Outcome</div>
+      <div style="font-size:18px;font-weight:700;line-height:1.45;margin-bottom:8px;color:#fff">${G.feedback.insight}</div>
+      <div style="font-size:13px;color:#ffffff70;margin-bottom:18px">"${G.feedback.text}"</div>
+      <button class="btn btn-primary" onclick="nextRound()">${G.round+1>=TOTAL?'See Results →':'Next Round →'}</button>
+    </div>`:''}
+  </div></div>`;
+}
+
+function renderResults(el){
+  const sc=G.finalScore;const{emoji,title,color,blurb}=titleInfo(sc);const m=G.metrics;
+  const ind=INDUSTRIES.find(i=>i.id===G.industry);
+  el.innerHTML=`<div class="screen"><div class="max500">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:46px;margin-bottom:8px">${emoji}</div>
+      <div class="tag">${ind?ind.emoji+' '+ind.label:''} · ${G.capital.label} · ${G.name}</div>
+      <h2 style="font-size:30px;font-weight:800;color:${color};text-shadow:0 0 24px ${color}60;margin-bottom:8px">${title}</h2>
+      <p style="font-size:14px;color:#ffffffcc;line-height:1.65">${blurb}</p>
+    </div>
+    ${G.newBadges.length?`<div style="background:#fbbf2410;border:1px solid #fbbf2430;border-radius:12px;padding:14px;margin-bottom:14px;text-align:center">
+      <div class="tag" style="margin-bottom:6px">New Badges Unlocked!</div>
+      <div>${G.newBadges.map(b=>`<span class="badge-pill new">${b.emoji} ${b.label}</span>`).join('')}</div>
+    </div>`:''}
+    <div class="card" style="margin-bottom:12px">${renderMetrics(m,null)}</div>
+    <div class="card" style="margin-bottom:12px;text-align:center">
+      <div class="tag" style="margin-bottom:6px">Final Score</div>
+      <div class="score-huge" style="color:${color};text-shadow:0 0 32px ${color}50">${sc}</div>
+      <div style="font-size:11px;color:#ffffff50;margin-top:4px;font-family:var(--mono)">Cash + Growth + Trust − Risk</div>
+    </div>
+
+    <!-- Pro upsell on results if not pro -->
+    ${!isPro?`<div style="background:linear-gradient(135deg,#1a0a2e,#0d0820);border:1px solid #a855f730;border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
+      <div style="font-size:13px;color:#ffffff80;margin-bottom:8px">Want to play Restaurant & Fashion?</div>
+      <button class="btn btn-primary" onclick="G.screen='home';render();setTimeout(()=>openHomeTab('pro'),100)" style="padding:11px 20px;font-size:14px">Unlock Pro — $2.99 →</button>
+    </div>`:''}
+
+    <div style="margin-bottom:12px">
+      <button style="background:none;border:none;cursor:pointer;color:#ffffff60;letter-spacing:2px;font-size:10px;text-decoration:underline;font-family:var(--mono)" onclick="toggleHistory()">▶ Decision History</button>
+      <div id="hist-panel" style="display:none;margin-top:10px;background:#ffffff05;border-radius:10px;padding:10px">${renderHistory()}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="btn btn-primary" onclick="playAgain()" style="flex:1">Play Again</button>
+      <button class="btn btn-ghost" onclick="shareResult()" style="flex:1">Share 📸</button>
+    </div>
+  </div></div>`;
+}
+
+function decide(i){
+  if(G.feedback)return;clearTimer();playSound('click');
+  const ev=G.events[G.round];const opt=ev.options[i];
+  const nm=applyFx(G.metrics,opt.fx,G.capital.id);
+  const dv={cash:nm.cash-G.metrics.cash,growth:nm.growth-G.metrics.growth,trust:nm.trust-G.metrics.trust,risk:nm.risk-G.metrics.risk};
+  G.metrics=nm;G.deltas=dv;G.history.push({round:G.round+1,event:ev.title,choice:opt.label,deltas:dv});
+  if(ev.urgent)G.urgentSurvived++;
+  Object.values(nm).forEach(v=>{if(v<G.minMetric)G.minMetric=v});if(nm.risk>G.maxRisk)G.maxRisk=nm.risk;
+  const hasGood=Object.entries(dv).some(([k,v])=>k==='risk'?v<0:v>0);
+  G.feedback={text:opt.label,insight:insight(dv)};G.timerActive=false;
+  playSound(hasGood?'good':'bad');
+  if(G.round<TOTAL-1&&Math.random()<0.4)G.microEvent=MICRO_EVENTS[Math.floor(Math.random()*MICRO_EVENTS.length)];else G.microEvent=null;
+  render();
+}
+function nextRound(){
+  if(G.microEvent){const nm=applyFx(G.metrics,G.microEvent.fx,G.capital.id);Object.values(nm).forEach(v=>{if(v<G.minMetric)G.minMetric=v});if(nm.risk>G.maxRisk)G.maxRisk=nm.risk;G.metrics=nm;}
+  G.round++;G.feedback=null;G.deltas={};G.microEvent=null;
+  if(G.round>=TOTAL){
+    G.finalScore=score(G.metrics);
+    // Track total plays
+    try{const p=parseInt(localStorage.getItem('ee_total_plays')||'0');localStorage.setItem('ee_total_plays',p+1)}catch(e){}
+    const ind=INDUSTRIES.find(i=>i.id===G.industry);
+    saveGlobalLb({name:G.name.trim()||'Anonymous',score:G.finalScore,industry:ind?ind.emoji+' '+ind.label:'Tech',capital:G.capital.label,ts:Date.now()});
+    G.newBadges=checkBadges();if(G.newBadges.length)playSound('badge');
+    G.screen='results';render();return;
+  }
+  render();if(G.events[G.round].urgent)startTimer();
+}
+function toggleHistory(){const p=document.getElementById('hist-panel');if(p)p.style.display=p.style.display==='none'?'block':'none'}
+function renderHistory(){
+  if(!G.history.length)return'<p style="color:#ffffff50;font-size:13px">No decisions recorded.</p>';
+  return G.history.map(h=>`<div class="history-row">
+    <div style="font-family:var(--mono);font-size:10px;color:#ffffff50;margin-bottom:3px">ROUND ${h.round} · ${h.event}</div>
+    <div style="font-size:13px;color:#ffffffcc;margin-bottom:4px">${h.choice}</div>
+    <div style="font-family:var(--mono);font-size:11px">${Object.entries(h.deltas).filter(([,v])=>v!==0).map(([k,v])=>`<span style="color:${v>0&&k!=='risk'||v<0&&k==='risk'?'#34d399':'#f87171'}">${k} ${v>0?'+'+v:v}</span>`).join(' ')}</div>
+  </div>`).join('');
+}
+function renderBadges(){
+  return`<div class="card" style="text-align:left">
+    <div class="tag" style="margin-bottom:10px">Achievement Badges · ${earnedBadges.size} / ${BADGES.length}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${BADGES.map(b=>{const earned=earnedBadges.has(b.id);return`<div style="background:${earned?'#ffffff0f':'#ffffff05'};border:1px solid ${earned?'#ffffff25':'#ffffff10'};border-radius:10px;padding:12px;opacity:${earned?1:.5}">
+        <div style="font-size:22px;margin-bottom:5px">${b.emoji}</div>
+        <div style="font-size:13px;font-weight:700;color:${earned?'#fff':'#ffffff80'}">${b.label}</div>
+        <div style="font-size:11px;color:#ffffff60;margin-top:2px">${b.desc}</div>
+        ${earned?'<div style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px">✓ EARNED</div>':''}
+      </div>`}).join('')}
+    </div>
+  </div>`;
+}
+function renderPro(){
+  if(isPro)return`<div class="card" style="text-align:center"><div style="font-size:40px;margin-bottom:10px">✦</div><h2 style="font-size:22px;font-weight:800;color:var(--purple);margin-bottom:8px">You're Pro!</h2><p style="font-size:14px;color:#ffffffaa;line-height:1.6">All industries unlocked. Restaurant 🍽️ and Fashion 👗 are ready.</p></div>`;
+  return`<div class="card" style="text-align:left">
+    <div class="tag" style="margin-bottom:6px">Upgrade</div>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;color:#fff">Equity Empire <span style="color:var(--purple)">Pro</span></h2>
+    <p style="font-size:14px;color:#ffffffaa;margin-bottom:14px;line-height:1.65">One-time unlock · yours forever.</p>
+    <ul style="margin-bottom:16px;display:flex;flex-direction:column;gap:9px;list-style:none">
+      ${['🍽️ Restaurant industry — 8 unique scenarios','👗 Fashion industry — 8 unique scenarios','⚡ Emergency Retry — second chance','🎯 Early access to new expansions'].map(f=>`<li style="display:flex;gap:10px;font-size:14px;color:#ffffffcc"><span style="color:var(--purple)">✦</span>${f}</li>`).join('')}
+    </ul>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
+      <span style="font-family:var(--mono);font-size:36px;font-weight:700;color:#fff">$2.99</span>
+      <span style="font-family:var(--mono);font-size:12px;color:#ffffff60">USD · one-time</span>
+    </div>
+    <a href="https://paypal.me/irissilva680/2.99" target="_blank" class="btn-paypal" style="margin-bottom:12px">💙 Pay $2.99 via PayPal → Get Unlock Code</a>
+    <div class="tag" style="margin-bottom:6px">Already paid? Enter your code:</div>
+    <div style="display:flex;gap:8px">
+      <input class="inp" id="procode" placeholder="Enter unlock code..." style="flex:1;text-transform:uppercase" maxlength="20">
+      <button class="btn btn-primary" onclick="redeemCode()" style="width:auto;padding:12px 18px;flex-shrink:0">Unlock</button>
+    </div>
+    <div id="code-msg" style="margin-top:8px;font-family:var(--mono);font-size:12px"></div>
+    <div style="margin-top:12px;font-family:var(--mono);font-size:10px;color:#ffffff40;text-align:center;letter-spacing:2px">SECURE · POWERED BY PAYPAL</div>
+  </div>`;
+}
+function redeemCode(){
+  const inp=document.getElementById('procode'),msg=document.getElementById('code-msg');if(!inp||!msg)return;
+  if(inp.value.trim().toUpperCase()===PRO_CODE){isPro=true;try{localStorage.setItem('ee_pro','1')}catch(e){}playSound('badge');msg.style.color='var(--green)';msg.textContent='✓ Pro unlocked! Restaurant & Fashion are now playable.';setTimeout(()=>{G.screen='setup';render()},1500)}
+  else{msg.style.color='var(--red)';msg.textContent='✗ Invalid code. Check your PayPal receipt.';playSound('bad')}
+}
+function generateShareImage(){
+  const canvas=document.getElementById('shareCanvas');canvas.width=600;canvas.height=340;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#080810';ctx.fillRect(0,0,600,340);
+  ctx.strokeStyle='#ffffff06';ctx.lineWidth=1;for(let y=0;y<340;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(600,y);ctx.stroke()}
+  ctx.fillStyle='#38bdf8';ctx.font='bold 26px sans-serif';ctx.fillText('Equity',30,55);
+  ctx.fillStyle='#a855f7';ctx.font='bold 26px sans-serif';ctx.fillText('Empire',108,55);
+  const ind=INDUSTRIES.find(i=>i.id===G.industry);
+  ctx.fillStyle='#ffffff40';ctx.font='12px monospace';ctx.fillText((ind?ind.emoji+' '+ind.label:'Tech')+' · '+G.capital.label+' · '+G.name,30,78);
+  const{emoji,title,color}=titleInfo(G.finalScore);
+  ctx.fillStyle=color;ctx.font='bold 20px sans-serif';ctx.fillText(emoji+' '+title,30,110);
+  ctx.fillStyle='#ffffff40';ctx.font='11px monospace';ctx.fillText('SCORE',30,142);
+  ctx.fillStyle=color;ctx.font='bold 46px monospace';ctx.fillText(G.finalScore,30,190);
+  const keys=['cash','growth','trust','risk'];const mColors={cash:'#38bdf8',growth:'#a855f7',trust:'#34d399',risk:'#f87171'};
+  keys.forEach((k,i)=>{const x=320,y=68+i*55,w=220,h=8,val=G.metrics[k];ctx.fillStyle='#ffffff10';ctx.fillRect(x,y,w,h);ctx.fillStyle=mColors[k];ctx.fillRect(x,y,w*val/100,h);ctx.fillStyle='#ffffff70';ctx.font='10px monospace';ctx.fillText(k.toUpperCase(),x,y-5);ctx.fillStyle='#fff';ctx.font='bold 12px monospace';ctx.fillText(val,x+w+8,y+8)});
+  if(earnedBadges.size>0){const bArr=[...earnedBadges].map(id=>BADGES.find(b=>b.id===id)).filter(Boolean);ctx.fillStyle='#ffffff40';ctx.font='10px monospace';ctx.fillText('BADGES',30,228);bArr.slice(0,6).forEach((b,i)=>{ctx.font='17px sans-serif';ctx.fillText(b.emoji,30+i*34,254)})}
+  ctx.fillStyle='#ffffff50';ctx.font='13px sans-serif';ctx.fillText('Can you beat me? 😏',30,292);
+  ctx.fillStyle='#ffffff30';ctx.font='11px monospace';ctx.fillText('EQUITY EMPIRE · Business Simulation',30,318);
+  return canvas.toDataURL('image/png');
+}
+function shareResult(){
+  playSound('click');const dataUrl=generateShareImage();
+  const link=document.createElement('a');link.download='equity-empire-result.png';link.href=dataUrl;link.click();
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#34d399;color:#000;padding:10px 20px;border-radius:10px;font-family:Syne,sans-serif;font-weight:700;font-size:14px;z-index:9999;animation:fadeIn .3s ease';
+  toast.textContent='Image saved! Share it 🎉';document.body.appendChild(toast);setTimeout(()=>toast.remove(),3000);
+}
+function playAgain(){
+  clearTimer();
+  G={screen:'setup',name:G.name,capital:G.capital,industry:G.industry,metrics:{},events:[],round:0,
+    feedback:null,deltas:{},timerVal:TIMER_SECS,timerActive:false,_timer:null,
+    history:[],microEvent:null,newBadges:[],urgentSurvived:0,minMetric:100,maxRisk:0,finalScore:0};
+  render();
+}
+render();
+</script>
+</body>
+</html>
